@@ -128,7 +128,7 @@ class AprUtilConan(ConanFile):
             tc.variables["INSTALL_PDB"] = False
             tc.variables["APU_HAVE_CRYPTO"] = self._with_crypto
             tc.variables["APR_HAS_LDAP"] = self.options.with_ldap
-            if Version(self.version) <= "1.6":
+            if Version(self.version) <= "1.7":
                 tc.cache_variables["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
             tc.generate()
             deps = CMakeDeps(self)
