@@ -13,7 +13,7 @@ from conan.tools.layout import basic_layout
 from conan.tools.microsoft import is_msvc
 from conan.tools.scm import Version
 
-required_conan_version = ">=1.54.0"
+required_conan_version = ">=2.1"
 
 
 class AprConan(ConanFile):
@@ -77,9 +77,6 @@ class AprConan(ConanFile):
                    "[conf]\nuser.apr:cache_file=/path/to/cache_file\n\n"
                    "Via CLI: \n"
                    "-c \"user.apr:cache_file='/path/to/cache_file'\"")
-            # Cross-building for apr < 1.7.4 is not supported without a pre-built cached file
-            if Version(self.version) < "1.7.4" and self.conf.get("user.apr:cache_file") is None:
-                raise ConanInvalidConfiguration(msg)
             # Conan provides for apr >= 1.7.4 and Linux some configuration flags to avoid
             # entering a pre-built cached file
             if self.settings.os != "Linux" and self.conf.get("user.apr:cache_file") is None:
@@ -143,10 +140,8 @@ class AprConan(ConanFile):
             tc = CMakeToolchain(self)
             tc.variables["INSTALL_PDB"] = False
             tc.variables["APR_BUILD_TESTAPR"] = False
-            if Version(self.version) <= "1.7.4":
-                tc.cache_variables["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5" # CMake 4 support
-            else:
-                raise ConanException("Check for new version support of CMake 4 in new version")
+            if Version(self.version) <= "1.7.6":
+                tc.cache_variables["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
             tc.generate()
         else:
             env = VirtualBuildEnv(self)
