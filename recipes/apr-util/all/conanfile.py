@@ -7,9 +7,10 @@ from conan.tools.env import VirtualRunEnv
 from conan.tools.files import apply_conandata_patches, copy, export_conandata_patches, get, rm, rmdir
 from conan.tools.gnu import Autotools, AutotoolsDeps, AutotoolsToolchain
 from conan.tools.layout import basic_layout
+from conan.tools.scm import Version
 import os
 
-required_conan_version = ">=1.54.0"
+required_conan_version = ">=2.1"
 
 
 class AprUtilConan(ConanFile):
@@ -127,10 +128,8 @@ class AprUtilConan(ConanFile):
             tc.variables["INSTALL_PDB"] = False
             tc.variables["APU_HAVE_CRYPTO"] = self._with_crypto
             tc.variables["APR_HAS_LDAP"] = self.options.with_ldap
-            if Version(self.version) <= "1.6.1":
-                tc.cache_variables["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5" # CMake 4 support
-            else:
-                raise ConanException("Check for new version support of CMake 4 in new version")
+            if Version(self.version) <= "1.6":
+                tc.cache_variables["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
             tc.generate()
             deps = CMakeDeps(self)
             deps.generate()
